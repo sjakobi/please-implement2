@@ -1,6 +1,9 @@
 # Create _data/ directory if not already there
 mkdir -p _data
 
+# Remove any files in _data/
+touch _data/x; rm _data/*
+
 # Get the list of all language repos and write it to _data/tracks.json
 curl https://api.github.com/users/exercism/repos?per_page=100 \
 	| jq '[.[]
@@ -28,3 +31,11 @@ curl https://api.github.com/repos/exercism/x-common/contents \
 # Sort all exercises by number of existing implementations (descending) and
 # write those to _data/all_exercise_by_number_of_implementations.json
 python sort_exercises.py > _data/all_exercises_by_number_of_implementations.json
+
+# Push any changes to the gh-pages branch on GitHub
+fish github_account_data.fish
+
+git checkout gh-pages
+git add _data
+git commit -m "Data changes at "(date)""
+git push https://$GITHUB_USERNAME:$GITHUB_PASSWORD@github.com/sjakobi/please-implement2.git gh-pages
